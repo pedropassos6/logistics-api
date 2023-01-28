@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import com.pedropassos.api.model.Ocorrencia;
 import com.pedropassos.domain.ValidationGroups;
+import com.pedropassos.domain.exception.NegocioException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -76,5 +77,28 @@ public class Entrega {
 		return ocorrencia;
 		
 	}
+
+
+	public void finalizar() {
+		if (naoPodeSerFinalizada()) {
+			throw new NegocioException("Entrega não pode ser finalizada");
+		}
+		
+		setStatus(StatusEntrega.FINALIZADA);
+		setDataFinalizacao(OffsetDateTime.now());
+		
+	}
+	
+	public boolean podeSerFinalizada() {
+		return StatusEntrega.PENDENTE.equals(getStatus());
+	}
+	
+	public boolean naoPodeSerFinalizada() {
+		return !podeSerFinalizada();
+	}
+	
+	
+	
+	
 
 }
